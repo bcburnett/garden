@@ -1,4 +1,3 @@
-#include <SPI.h>
 #include "FS.h"
 #include "SPIFFS.h"
 #include "ArduinoJson.h"

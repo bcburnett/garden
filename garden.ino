@@ -4,7 +4,6 @@
 #include "bcbsdcard.h"
 #include "time.h"
 #include "WiFiCred1.h"
-#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ArduinoOTA.h>
 #include <ESPmDNS.h>
