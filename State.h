@@ -8,8 +8,6 @@
 class State {  
    public:
       
-
-    
      int moisture(){return analogRead(32);};
     
      String filename(){return mfilename;};

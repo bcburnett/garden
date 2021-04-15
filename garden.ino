@@ -17,6 +17,7 @@ const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = -18000;
 const int daylightOffset_sec = 3600;
 
+
 bool wifiavail = false;
 
 // localtime from internal rtc
@@ -39,9 +40,9 @@ String printLocalHour() {
 // define functions
 void UpdateClients(void *pvParameters); // maintains the websocket display
 void UpdateDatabase(void *pvParameters); // maintains the websocket display
-void MeasureData(void *pvParameters); // maintains the websocket display
 void initWiFi();
 void initTime();
+
 
 void setup() {
   // start the serial interface
@@ -53,28 +54,23 @@ void setup() {
   initWebSocket();
   initSDCard();
   checkForIndex();
-
-  xTaskCreatePinnedToCore(UpdateClients, "updateClients" // A name just for humans
+  digitalWrite(2, LOW);
+  pinMode(2, OUTPUT);
+  
+  xTaskCreatePinnedToCore(UpdateClients, // function name 
+                          "updateClients" // A name just for humans
                           ,
                           4096 // This stack size can be checked & adjusted by
                           // reading the Stack Highwater
                           ,
-                          NULL, 2 // Priority, with 3 (configMAX_PRIORITIES - 1)
+                          NULL,// task input parameter
+                          2 // Priority, with 3 (configMAX_PRIORITIES - 1)
                           // being the highest, and 0 being the lowest.
                           ,
-                          NULL, ARDUINO_RUNNING_CORE);
+                          NULL, // task handle
+                          ARDUINO_RUNNING_CORE);
 
   xTaskCreatePinnedToCore(UpdateDatabase, "updateDatabase" // A name just for humans
-                          ,
-                          4096 // This stack size can be checked & adjusted by
-                          // reading the Stack Highwater
-                          ,
-                          NULL, 2 // Priority, with 3 (configMAX_PRIORITIES - 1)
-                          // being the highest, and 0 being the lowest.
-                          ,
-                          NULL, ARDUINO_RUNNING_CORE);
-                          
-  xTaskCreatePinnedToCore(MeasureData, "measureData" // A name just for humans
                           ,
                           4096 // This stack size can be checked & adjusted by
                           // reading the Stack Highwater
@@ -140,25 +136,23 @@ void UpdateClients(void *pvParameters) { // handle websocket and oled displays
   (void)pvParameters;
   for (;;) {
     if(!state.getOta()) {notifyInitialClients(getJson(true));} // send state to the client as a json string
-    vTaskDelay(5000);
+    vTaskDelay(30000);
   }
 }
 
 void UpdateDatabase(void *pvParameters) { // handle websocket and oled displays
   (void)pvParameters;
   for (;;) {
-    //if(!state.ota) {updateDB();} // send state to the mysql database
+    if(state.moisture() > 3000) {
+      digitalWrite(2, HIGH);}else{
+      digitalWrite(2, LOW);
+      }
     vTaskDelay(60000);
   }
 }
 
-void MeasureData(void *pvParameters) { // handle websocket and oled displays
-  (void)pvParameters;
-  for (;;) {
-    //if(!state.getOta()) {doSensorMeasurement();} // send state to the mysql database
-    vTaskDelay(30000);
-  }
-}
+
+
 
 void initWiFi() {
   Serial.println("connecting to wifi");
