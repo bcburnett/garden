@@ -110,6 +110,7 @@ String getJson(bool b) {
 //};
 
   data["moisture"] = state.moisture();
+  data["relay"] = state.relay()?"on":"off";
   if (b) {
     data["initial"] = "true";
   }
@@ -128,7 +129,11 @@ String getJson(bool b) {
 //parse the command coming from the client(s)
 void parseCommand(String command) {
   Serial.println(command);
-
+  
+  if (command == "relay") {
+    state.relay(!state.relay());
+    notifyClients();
+  }
   // file upload handler
 
   if (command.substring(0, 4) == "upld") {

@@ -9,6 +9,7 @@
 #include <ESPmDNS.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <async.h>
 
 #define ARDUINO_RUNNING_CORE 1
 
@@ -136,14 +137,14 @@ void UpdateClients(void *pvParameters) { // handle websocket and oled displays
   (void)pvParameters;
   for (;;) {
     if(!state.getOta()) {notifyInitialClients(getJson(true));} // send state to the client as a json string
-    vTaskDelay(30000);
+    vTaskDelay(10000);
   }
 }
 
 void UpdateDatabase(void *pvParameters) { // handle websocket and oled displays
   (void)pvParameters;
   for (;;) {
-    if(state.moisture() > 3000) {
+    if(state.moisture() > 3400 && state.relay()) {
       digitalWrite(2, HIGH);}else{
       digitalWrite(2, LOW);
       }

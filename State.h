@@ -8,8 +8,13 @@
 class State {  
    public:
       
-     int moisture(){return analogRead(32);};
-    
+     int moisture(){
+      int avg = 0;
+      for(int num=0; num <=9; num++){
+        avg += analogRead(32);
+      }
+      return avg/10;
+     }
      String filename(){return mfilename;};
      String filename(String value){mfilename = value; return mfilename;};
     
@@ -22,11 +27,14 @@ class State {
      bool reload(){return mreload;};
      bool reload(bool value){mreload=value;return mreload;};
     
-
+     bool relay(){return mrelay;};
+     bool relay(bool value){mrelay=value;return mrelay;};
+     
     private:
 
      bool ota = false;
      bool mreload = false;
+     bool mrelay = false;
      String mjson = "";
      String mfilename= "index.htm";
      
