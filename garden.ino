@@ -40,7 +40,7 @@ String printLocalHour() {
 
 // define functions
 void UpdateClients(void *pvParameters); // maintains the websocket display
-void UpdateDatabase(void *pvParameters); // maintains the websocket display
+//void UpdateDatabase(void *pvParameters); // maintains the websocket display
 void initWiFi();
 void initTime();
 
@@ -70,16 +70,16 @@ void setup() {
                           ,
                           NULL, // task handle
                           ARDUINO_RUNNING_CORE);
-
-  xTaskCreatePinnedToCore(UpdateDatabase, "updateDatabase" // A name just for humans
-                          ,
-                          4096 // This stack size can be checked & adjusted by
-                          // reading the Stack Highwater
-                          ,
-                          NULL, 2 // Priority, with 3 (configMAX_PRIORITIES - 1)
-                          // being the highest, and 0 being the lowest.
-                          ,
-                          NULL, ARDUINO_RUNNING_CORE);
+//
+//  xTaskCreatePinnedToCore(UpdateDatabase, "updateDatabase" // A name just for humans
+//                          ,
+//                          4096 // This stack size can be checked & adjusted by
+//                          // reading the Stack Highwater
+//                          ,
+//                          NULL, 2 // Priority, with 3 (configMAX_PRIORITIES - 1)
+//                          // being the highest, and 0 being the lowest.
+//                          ,
+//                          NULL, ARDUINO_RUNNING_CORE);
 
   ArduinoOTA
   .onStart([]() {
@@ -141,16 +141,16 @@ void UpdateClients(void *pvParameters) { // handle websocket and oled displays
   }
 }
 
-void UpdateDatabase(void *pvParameters) { // handle websocket and oled displays
-  (void)pvParameters;
-  for (;;) {
-    if(state.moisture() > 3400 && state.relay()) {
-      digitalWrite(2, HIGH);}else{
-      digitalWrite(2, LOW);
-      }
-    vTaskDelay(60000);
-  }
-}
+//void UpdateDatabase(void *pvParameters) { // handle websocket and oled displays
+//  (void)pvParameters;
+//  for (;;) {
+//    if(state.moisture() > 3400 && state.relay()) {
+//      digitalWrite(2, HIGH);}else{
+//      digitalWrite(2, LOW);
+//      }
+//    vTaskDelay(60000);
+//  }
+//}
 
 
 

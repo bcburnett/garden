@@ -52,6 +52,8 @@
 #include <iostream>
 #include<QDebug>
 #include"mainwindow.h"
+#include<QJsonDocument>
+#include<QJsonObject>
 
 QT_USE_NAMESPACE
 
@@ -81,16 +83,30 @@ void EchoClient::onConnected()
             this, &EchoClient::onTextMessageReceived);
 
     qDebug() << "connected to: " << m_url;
-    this->connected = true;
+
 }
 //! [onConnected]
 
 //! [onTextMessageReceived]
 void EchoClient::onTextMessageReceived(QString message)
 {
-
-  m_moist->setText(message.mid(12,4));
-  m_relay->setText(message.mid(26,3));
+  auto json_doc=QJsonDocument::fromJson(message.toUtf8());
+  if(json_doc.isNull()){
+      qDebug()<<"Failed to create JSON doc.";
+      return;
+  }
+  if(!json_doc.isObject()){
+      qDebug()<<"JSON is not an object.";
+      return;
+  }
+  QJsonObject json_obj=json_doc.object();
+  if(json_obj.isEmpty()){
+      qDebug()<<"JSON object is empty.";
+      return;
+  }
+  QVariantMap json_map = json_obj.toVariantMap();
+  m_relay->setText(json_map["relay"].toString());
+  m_moist->setText(json_map["moisture"].toString());
 
         qDebug() << message;
 }

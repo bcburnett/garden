@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "/home/brian/Arduino/projects/garden/esp32/garden/gardenControl/build-GardenControl_0_1-Android_Qt_5_15_2_Clang_Multi_Abi-Debug/android-build/build/intermediates/incremental/mergeDebugResources/merged.dir/values-se/values-se.xml",
+            "map": [
+                {
+                    "source": "/home/brian/Qt/5.15.2/android/src/android/java/res/values-se/strings.xml",
+                    "from": {
+                        "startLines": "4,3,2,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "290,173,55,408",
+                        "endColumns": "117,116,117,92",
+                        "endOffsets": "403,285,168,496"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,173,290,408",
+                        "endColumns": "117,116,117,92",
+                        "endOffsets": "168,285,403,496"
+                    }
+                }
+            ]
+        }
+    ]
+}

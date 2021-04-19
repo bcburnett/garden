@@ -1,0 +1,7 @@
+#Sat Apr 17 21:42:44 EDT 2021
+base.0=/home/brian/Arduino/projects/garden/esp32/garden/gardenControl/build-GardenControl_0_1-Android_Qt_5_15_2_Clang_Multi_Abi-Debug/android-build/build/intermediates/dex/debug/mergeExtDexDebug/out/classes.dex
+path.1=classes.dex
+renamed.1=classes2.dex
+path.0=classes.dex
+renamed.0=classes.dex
+base.1=/home/brian/Arduino/projects/garden/esp32/garden/gardenControl/build-GardenControl_0_1-Android_Qt_5_15_2_Clang_Multi_Abi-Debug/android-build/build/intermediates/dex/debug/mergeProjectDexDebug/out/classes.dex

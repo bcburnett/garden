@@ -132,6 +132,7 @@ void parseCommand(String command) {
   
   if (command == "relay") {
     state.relay(!state.relay());
+    digitalWrite(2,state.relay());
     notifyClients();
   }
   // file upload handler
