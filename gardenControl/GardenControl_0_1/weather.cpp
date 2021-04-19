@@ -63,8 +63,7 @@ QVariantMap json_map = json_obj.toVariantMap();
   m_ptemp->setText(json_map["temperature"].toString());
   m_ppress->setText(json_map["pressure"].toString());
   m_phumid->setText(json_map["humidity"].toString());
-
-        qDebug() << message;
+  qDebug() << message;
 }
 
 void Weather::sendMessage(QString message)
