@@ -5,12 +5,14 @@
 #include <QtWebSockets/QWebSocket>
 #include <QJsonDocument>
 #include<QLabel>
+#include<functional>
+
 
 class EchoClient : public QObject
 {
   Q_OBJECT
 public:
-  void Echoinit(const QUrl &url, QLabel* moist, QLabel* relay );
+  void Echoinit(const QUrl &url, std::function<void(QVariantMap json_map)> callback );
   explicit EchoClient( QObject *parent = nullptr);
   QJsonDocument qjd();
   bool connected = false;
@@ -27,6 +29,7 @@ private slots:
 private:
     QWebSocket m_webSocket;
     QUrl m_url;
+    std::function<void(QVariantMap json_map)> m_callback;
     bool m_debug;
     QLabel* m_moist;
     QLabel* m_relay;

@@ -48,74 +48,30 @@
 **
 ****************************************************************************/
 #include "echoclient.h"
-#include <QtCore/QDebug>
-#include <iostream>
-#include<QDebug>
 #include"mainwindow.h"
 #include<QJsonDocument>
 #include<QJsonObject>
+#include<functional>
 
 QT_USE_NAMESPACE
-
 //! [constructor]
-void EchoClient::Echoinit( const QUrl &url, QLabel* moist, QLabel* relay) {
-  m_webSocket.close(QWebSocketProtocol::CloseCodeNormal);
-  m_moist = moist;
-  m_relay = relay;
- m_url = url;
-     connect(&m_webSocket, &QWebSocket::connected, this, &EchoClient::onConnected);
+EchoClient::EchoClient(QObject *parent) :QObject(parent){}
+
+//! [init]
+void EchoClient::Echoinit( const QUrl &url, std::function<void(QVariantMap json_map)> callback) {
+    m_webSocket.close(QWebSocketProtocol::CloseCodeNormal);
+    m_callback = callback;
+    m_url = url;
+    connect(&m_webSocket, &QWebSocket::connected, this, &EchoClient::onConnected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &EchoClient::closed);
     m_webSocket.open(m_url);
-    qDebug() << "connecting to: " << m_url;
 }
-
-
-
-EchoClient::EchoClient(QObject *parent) :
-    QObject(parent)
-{}
-//! [constructor]
 
 //! [onConnected]
-void EchoClient::onConnected()
-{
-
-    connect(&m_webSocket, &QWebSocket::textMessageReceived,
-            this, &EchoClient::onTextMessageReceived);
-
-    qDebug() << "connected to: " << m_url;
-
-}
-//! [onConnected]
+void EchoClient::onConnected(){connect(&m_webSocket, &QWebSocket::textMessageReceived,this, &EchoClient::onTextMessageReceived);}
 
 //! [onTextMessageReceived]
-void EchoClient::onTextMessageReceived(QString message)
-{
-  auto json_doc=QJsonDocument::fromJson(message.toUtf8());
-  if(json_doc.isNull()){
-      qDebug()<<"Failed to create JSON doc.";
-      return;
-  }
-  if(!json_doc.isObject()){
-      qDebug()<<"JSON is not an object.";
-      return;
-  }
-  QJsonObject json_obj=json_doc.object();
-  if(json_obj.isEmpty()){
-      qDebug()<<"JSON object is empty.";
-      return;
-  }
-  QVariantMap json_map = json_obj.toVariantMap();
-  m_relay->setText(json_map["relay"].toString());
-  m_moist->setText(json_map["moisture"].toString());
-
-        qDebug() << message;
-}
-//! [onTextMessageReceived]
+void EchoClient::onTextMessageReceived(QString message){m_callback(QJsonDocument::fromJson(message.toUtf8()).object().toVariantMap());}
 
 //! [sendMessage]
-void EchoClient::sendMessage(QString message)
-{
-  m_webSocket.sendTextMessage(message);
-}
-//! [sendMessage]
+void EchoClient::sendMessage(QString message){m_webSocket.sendTextMessage(message);}

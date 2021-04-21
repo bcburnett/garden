@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include"echoclient.h"
-#include"weather.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,7 +19,7 @@ EchoClient sensor1;
 EchoClient sensor2;
 EchoClient sensor3;
 EchoClient sensor4;
-Weather garden1;
+EchoClient garden1;
 private slots:
   void on_btns1Relay_clicked();
 

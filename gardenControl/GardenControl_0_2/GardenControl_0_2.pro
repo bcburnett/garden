@@ -11,13 +11,11 @@ CONFIG += c++17
 SOURCES += \
     echoclient.cpp \
     main.cpp \
-    mainwindow.cpp \
-    weather.cpp
+    mainwindow.cpp
 
 HEADERS += \
     echoclient.h \
-    mainwindow.h \
-    weather.h
+    mainwindow.h
 
 FORMS += \
     mainwindow.ui
