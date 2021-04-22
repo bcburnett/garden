@@ -1,7 +1,5 @@
 #include <Arduino.h>
 #include "State.h"
-#include "bcbaws.h"
-#include "bcbsdcard.h"
 #include "time.h"
 #include "WiFiCred1.h"
 #include <ArduinoJson.h>
@@ -9,10 +7,11 @@
 #include <ESPmDNS.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include <async.h>
+#include "bcbaws.h"
 
 #define ARDUINO_RUNNING_CORE 1
-
+State state;
+BcbAws aws;
 // internal rtc variables
 const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = -18000;
@@ -39,47 +38,29 @@ String printLocalHour() {
 }
 
 // define functions
-void UpdateClients(void *pvParameters); // maintains the websocket display
-//void UpdateDatabase(void *pvParameters); // maintains the websocket display
+void UpdateClients(void *pvParameters);
 void initWiFi();
 void initTime();
-
+void setup();
+void loop();
 
 void setup() {
-  // start the serial interface
   Serial.begin(115200);
   delay(500);
   initWiFi();
   initTime();
-  initWebServer();
-  initWebSocket();
-  initSDCard();
-  checkForIndex();
+  aws.BcbAwsInit(&state);
   digitalWrite(2, LOW);
   pinMode(2, OUTPUT);
+  state.relay(false);
   
   xTaskCreatePinnedToCore(UpdateClients, // function name 
-                          "updateClients" // A name just for humans
-                          ,
-                          4096 // This stack size can be checked & adjusted by
-                          // reading the Stack Highwater
-                          ,
+                          "updateClients",// name for humans
+                          1024, // This stack size can be checked & adjusted by reading the Stack Highwater
                           NULL,// task input parameter
-                          2 // Priority, with 3 (configMAX_PRIORITIES - 1)
-                          // being the highest, and 0 being the lowest.
-                          ,
+                          2, // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
                           NULL, // task handle
                           ARDUINO_RUNNING_CORE);
-//
-//  xTaskCreatePinnedToCore(UpdateDatabase, "updateDatabase" // A name just for humans
-//                          ,
-//                          4096 // This stack size can be checked & adjusted by
-//                          // reading the Stack Highwater
-//                          ,
-//                          NULL, 2 // Priority, with 3 (configMAX_PRIORITIES - 1)
-//                          // being the highest, and 0 being the lowest.
-//                          ,
-//                          NULL, ARDUINO_RUNNING_CORE);
 
   ArduinoOTA
   .onStart([]() {
@@ -88,40 +69,11 @@ void setup() {
       type = "sketch";
     else // U_SPIFFS
       type = "filesystem";
-
-    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
-    SPIFFS.end();
- // Disable client connections    
-    ws.enable(false);
-
-    // Advertise connected clients what's going on
-    ws.textAll("OTA Update Started");
-
-    // Close them
-    ws.closeAll();
+    SPIFFS.end();// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
+    aws.ws.enable(false);// Disable client connections 
+    aws.ws.textAll("OTA Update Started");// Advertise connected clients what's going on
+    aws.ws.closeAll();// Close them
     state.setOta(true);
-
-    
-    Serial.println("Start updating " + type);
-  })
-  .onEnd([]() {
-    Serial.println("\nEnd");
-  })
-  .onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  })
-  .onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR)
-      Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR)
-      Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR)
-      Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR)
-      Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR)
-      Serial.println("End Failed");
   });
   ArduinoOTA.begin();
 }
@@ -136,24 +88,10 @@ void loop() {
 void UpdateClients(void *pvParameters) { // handle websocket and oled displays
   (void)pvParameters;
   for (;;) {
-    if(!state.getOta()) {notifyInitialClients(getJson(true));} // send state to the client as a json string
+    if(!state.getOta()) {aws.notifyClients();} // send state to the client as a json string
     vTaskDelay(10000);
   }
 }
-
-//void UpdateDatabase(void *pvParameters) { // handle websocket and oled displays
-//  (void)pvParameters;
-//  for (;;) {
-//    if(state.moisture() > 3400 && state.relay()) {
-//      digitalWrite(2, HIGH);}else{
-//      digitalWrite(2, LOW);
-//      }
-//    vTaskDelay(60000);
-//  }
-//}
-
-
-
 
 void initWiFi() {
   Serial.println("connecting to wifi");

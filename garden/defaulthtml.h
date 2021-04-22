@@ -9,43 +9,12 @@ const char htmlCode[]PROGMEM = R"rawliteral(
   <! define meta data>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <! define the style CSS of your page>
-      <style>
-        html {
-          font-family: Arial;
-          display: inline-block;
-          text-align: center;
-        }
-
-        h1 {
-          font-size: 2.9rem;
-        }
-
-        h2 {
-          font-size: 2.1rem;
-        }
-
-        p {
-          font-size: 1.9rem;
-        }
-
-        body {
-          margin:auto;
-          padding-bottom: 30px;
-          text-align: center;
-        }
-
-      </style>
+     
 </head>
 
 <body>
 
-  <div style="width: 75%; margin:auto; text-align:center;"></div>
-  <h2>ESP32 Weather Station <span id="time"></span></h2>
 
-
-   
-    <hr>
-    <p>Soil Moisture: <span id="moisture"></span></p>
 
     <input type='file' name='upload' id='upload' value=''><span id="percent"></span>
   </div>
@@ -80,10 +49,7 @@ const char htmlCode[]PROGMEM = R"rawliteral(
     }
 
     function onMessage(event) {
-      json = JSON.parse(event.data);
-      console.log(json);
-      document.getElementById("moisture").innerHTML = json.moisture;
-      if (json.reload) location.reload();
+
     }
 
     // on page load
