@@ -1,17 +1,35 @@
+/*
+* Garden sensor sketch
+* Author: Brian C. Burnett
+* GitHub repo: https://github.com/bcburnett/garden
+* Directory: https://github.com/bcburnett/garden/tree/master/garden
+* Questions: https://github.com/bcburnett/garden/discussions/1
+* 
+* The relay for the water solenoid is connected to pin 2 of the esp32 
+*   to give a visual indicator .
+*   
+* The capacitive moisture sensor analog output is connected to pin 32.
+* 
+* This application is in the Public Domain.
+* All information is provided in good faith, however I make no representation 
+* or warranty of any kind, express or implied, regarding the accuracy, adequacy, 
+* validity, reliability, availability or completeness of this application.
+ */
+
 #include <Arduino.h>
-#include "State.h"
-#include "time.h"
-#include "WiFiCred1.h"
-#include <ArduinoOTA.h>
-#include <ESPmDNS.h>
-#include <WiFi.h>
-#include <WiFiUdp.h>
-#include "bcbaws.h"
+#include "State.h" // holds application state
+#include "time.h"  // setting the rtc
+#include "WiFiCred1.h" // wifi credentials
+#include <ArduinoOTA.h> // OTA update server
+#include <ESPmDNS.h> // needed by OTA
+#include <WiFi.h>  // WiFi library
+#include <WiFiUdp.h> // needed by OTA
+#include "bcbaws.h" // Asynchronous web server wrapper for espasyncwebserver and websockets
 
-#define ARDUINO_RUNNING_CORE 1
+#define ARDUINO_RUNNING_CORE 1 // core to bind our task to
 
-State state;
-BcbAws aws;
+State state; // instantiate state class
+BcbAws aws;  // instantiate web server class
 
 // internal rtc variables
 const char *ntpServer = "pool.ntp.org";
@@ -53,11 +71,12 @@ void setup() {
   initWiFi();
   initTime();
   aws.BcbAwsInit(&state);
-  digitalWrite(2, LOW);
+  digitalWrite(2, LOW); // write the pin low before declaring it as an output
   pinMode(2, OUTPUT);
-  state.relay(false);
+  state.relay(false); 
 
-  xTaskCreatePinnedToCore(UpdateClients, // function name
+  xTaskCreatePinnedToCore(
+    UpdateClients, // function name
     "updateClients",                     // name for humans
     1024,                                // This stack size can be checked & adjusted by reading the Stack Highwater
     NULL,                                // task input parameter
@@ -74,9 +93,9 @@ void setup() {
       type = "filesystem";
     SPIFFS.end();// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
     aws.ws.enable(false);// Disable client connections
-    aws.ws.textAll("OTA Update Started");// Advertise connected clients what's going on
+    aws.ws.textAll("{\"message\":\"OTA Update Started\"");// Advertise to connected clients what's going on
     aws.ws.closeAll();// Close them
-    state.setOta(true);
+    state.setOta(true); // prevent updates to clients while updating
   });
   ArduinoOTA.begin();
 }
@@ -94,7 +113,7 @@ void UpdateClients(void *pvParameters) { // handle websocket and oled displays
     if (!state.getOta()) {
       aws.notifyClients(); // send state to the client as a json string
     }
-    vTaskDelay(10000);
+    vTaskDelay(900000); // update clients every 15 minutes
   }
 }
 
