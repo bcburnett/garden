@@ -69,16 +69,16 @@ String printLocalHour() {
 void setup() {
   Serial.begin(115200);
   delay(500);
-  initWiFi();
-  initTime();
-  aws.BcbAwsInit(&state);
-  digitalWrite(2, LOW); // write the pin low before declaring it as an output
-  pinMode(2, OUTPUT);
-  state.relay(false);
 
+  // set initial program state
+  initWiFi(); // connect to wifi
+  initTime(); // connect to ntp servers and set rtc
+  aws.BcbAwsInit(&state); // initialize the webserver and start listening for connections
+  digitalWrite(2, LOW); // write the relay pin low before declaring it as an output
+  pinMode(2, OUTPUT); // declare it an output 
+  state.relay(false); // and set the state to reflect the relay condition
 
-
-  ArduinoOTA
+  ArduinoOTA // OTA setup
   .onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH)
@@ -93,9 +93,8 @@ void setup() {
   });
   ArduinoOTA.begin();
 
-
-  xTaskCreatePinnedToCore(
-    UpdateClients, // function name
+  xTaskCreatePinnedToCore(               // 
+    UpdateClients,                       // function name
     "updateClients",                     // name for humans
     1024,                                // This stack size can be checked & adjusted by reading the Stack Highwater
     NULL,                                // task input parameter
