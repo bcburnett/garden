@@ -1,20 +1,21 @@
 /*
-* Garden sensor sketch
-* Author: Brian C. Burnett
-* GitHub repo: https://github.com/bcburnett/garden
-* Directory: https://github.com/bcburnett/garden/tree/master/garden
-* Questions: https://github.com/bcburnett/garden/discussions/1
-* 
-* The relay for the water solenoid is connected to pin 2 of the esp32 
-*   to give a visual indicator .
-*   
-* The capacitive moisture sensor analog output is connected to pin 32.
-* 
-* This application is in the Public Domain.
-* All information is provided in good faith, however I make no representation 
-* or warranty of any kind, express or implied, regarding the accuracy, adequacy, 
-* validity, reliability, availability or completeness of this application.
- */
+  Garden sensor sketch
+  File: garden.ino
+  Author: Brian C. Burnett
+  GitHub repo: https://github.com/bcburnett/garden
+  Directory: https://github.com/bcburnett/garden/tree/master/garden
+  Questions: https://github.com/bcburnett/garden/discussions/1
+
+  The relay for the water solenoid is connected to pin 2 of the esp32
+    to give a visual indicator .
+
+  The capacitive moisture sensor analog output is connected to pin 32.
+
+  This application is in the Public Domain.
+  All information is provided in good faith, however I make no representation
+  or warranty of any kind, express or implied, regarding the accuracy, adequacy,
+  validity, reliability, availability or completeness of this application.
+*/
 
 #include <Arduino.h>
 #include "State.h" // holds application state
@@ -73,7 +74,7 @@ void setup() {
   aws.BcbAwsInit(&state);
   digitalWrite(2, LOW); // write the pin low before declaring it as an output
   pinMode(2, OUTPUT);
-  state.relay(false); 
+  state.relay(false);
 
 
 
@@ -92,7 +93,7 @@ void setup() {
   });
   ArduinoOTA.begin();
 
-  
+
   xTaskCreatePinnedToCore(
     UpdateClients, // function name
     "updateClients",                     // name for humans
@@ -100,7 +101,7 @@ void setup() {
     NULL,                                // task input parameter
     2,                                   // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
     NULL,                                // task handle
-    ARDUINO_RUNNING_CORE); 
+    ARDUINO_RUNNING_CORE);
 }
 
 void loop() {
@@ -118,8 +119,6 @@ void UpdateClients(void *pvParameters) { // handle websocket and oled displays
     }
     vTaskDelay(900000); // update clients every 15 minutes
   }
-
-  
 }
 
 void initWiFi() {
