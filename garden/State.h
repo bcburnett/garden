@@ -1,5 +1,4 @@
-#ifndef STATE
-#define STATE
+#pragma once
 #include<Arduino.h>
 #include<map>
 //set initial state
@@ -31,7 +30,4 @@ class State {
   private:
     std::map<String, String> jsonMap;
     bool ota = false;
-
 };
-
-#endif

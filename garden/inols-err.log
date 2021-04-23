@@ -24112,3 +24112,24 @@ Started logging.
 2021/04/22 16:58:28 <-- hover("### variable `daylightOffset_sec`  \n\n---\nType: `const int`  \nValue = `3600`  \n\n---\n```cpp\nconst int daylightOffset_sec = 3600\n```")
 2021/04/22 16:58:28 IDE --> textDocument/hover 382 [93m read-unlocked[0m
 2021/04/22 16:58:28 [91mIDE <-- LS     CL: ANSWER UNBOUND (382): [0m
+2021/04/22 17:19:24 [92mIDE --> LS     CL: REQUEST textDocument/hover 383: [0m
+2021/04/22 17:19:24 IDE --> textDocument/hover 383 [93m read-locked[0m
+2021/04/22 17:19:24 --> hover(file:///home/brian/Arduino/projects/garden/esp32/garden/garden/garden.ino:5:2)
+2021/04/22 17:19:24     --> hover(file:///tmp/arduino-language-server518537796/sketch/garden.ino.cpp:6:2)
+2021/04/22 17:19:24 IDE --> textDocument/hover 383 sent to Clang
+2021/04/22 17:19:24 [91mIDE     LS --> CL: REQUEST textDocument/hover 385: [0m
+2021/04/22 17:19:24 [92mIDE     LS <-- CL: ANSWER textDocument/hover 385 (385): [0m
+2021/04/22 17:19:24 IDE --> textDocument/hover 383 [93m read-unlocked[0m
+2021/04/22 17:19:24 [91mIDE <-- LS     CL: ANSWER UNBOUND (383): [0m
+2021/04/22 17:21:24 [92mIDE --> LS     CL: REQUEST shutdown 384: [0m
+2021/04/22 17:21:24 IDE --> shutdown 384 [93m read-locked[0m
+2021/04/22 17:21:24 IDE --> shutdown 384 sent to Clang
+2021/04/22 17:21:24 [91mIDE     LS --> CL: REQUEST shutdown 386: [0m
+2021/04/22 17:21:24 [92mIDE     LS <-- CL: ANSWER shutdown 386 (386): [0m
+2021/04/22 17:21:24 IDE --> shutdown 384 [93m read-unlocked[0m
+2021/04/22 17:21:24 [91mIDE <-- LS     CL: ANSWER UNBOUND (384): [0m
+2021/04/22 17:21:24 [92mIDE --> LS     CL: NOTIFICATION exit: [0m
+2021/04/22 17:21:24 IDE --> exit notif253 [93m read-locked[0m
+2021/04/22 17:21:24 IDE --> exit notif253 sent to Clang
+2021/04/22 17:21:24 [91mIDE     LS --> CL: NOTIFICATION exit: [0m
+2021/04/22 17:21:24 IDE --> exit notif253 [93m read-unlocked[0m

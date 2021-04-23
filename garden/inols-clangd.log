@@ -9607,3 +9607,23 @@ Content-Length: 197
 Content-Length: 295
 
 {"id":384,"jsonrpc":"2.0","result":{"contents":{"kind":"markdown","value":"### variable `daylightOffset_sec`  \n\n---\nType: `const int`  \nValue = `3600`  \n\n---\n```cpp\nconst int daylightOffset_sec = 3600\n```"},"range":{"end":{"character":30,"line":18},"start":{"character":29,"line":18}}}}
+>>>
+Content-Length: 195
+
+{"method":"textDocument/hover","params":{"textDocument":{"uri":"file:///tmp/arduino-language-server518537796/sketch/garden.ino.cpp"},"position":{"line":6,"character":2}},"id":385,"jsonrpc":"2.0"}
+<<<
+Content-Length: 40
+
+{"id":385,"jsonrpc":"2.0","result":null}
+>>>
+Content-Length: 60
+
+{"method":"shutdown","params":null,"id":386,"jsonrpc":"2.0"}
+<<<
+Content-Length: 40
+
+{"id":386,"jsonrpc":"2.0","result":null}
+>>>
+Content-Length: 47
+
+{"method":"exit","params":null,"jsonrpc":"2.0"}

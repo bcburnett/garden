@@ -1,10 +1,13 @@
 #include"bcbaws.h"
-#include<FS.h>
-#include<SPIFFS.h>
+
 BcbAws::BcbAws() {}
+
 void BcbAws::BcbAwsInit(State* istate) {
   state = istate;
   SPIFFS.begin(true);
+  delay(50);
+  checkForIndex();
+  delay(50);
   server.on("/", HTTP_GET, [ = ](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/index.htm", "text/html");
   });
@@ -39,7 +42,7 @@ void BcbAws::BcbAwsInit(State* istate) {
 }
 
 void BcbAws::notifyClients() {
-  ws.textAll(state->getJSON());  // send non-slider updating data
+  ws.textAll(state->getJSON());  // send the state to the clients as json
 }
 
 void BcbAws::handleWebSocketMessage(void *arg, uint8_t *data, size_t len) { // receive the comm from the client and convert it into a string
@@ -55,26 +58,28 @@ void BcbAws::handleWebSocketMessage(void *arg, uint8_t *data, size_t len) { // r
 void BcbAws::parseCommand(String command) {
 
   if (command == "relay") {
-    state->relay(!state->relay());
-    digitalWrite(2, state->relay());
+    digitalWrite(2, state->relay(!state->relay()));
     notifyClients();
   }
   // file upload handler
 
   if (command.substring(0, 4) == "upld") {
     state->filename(command.substring(5));
-    deleteFile(SPIFFS, "/temp.txt");
+    SPIFFS.remove("/temp.txt");
   }
 
   if (command.substring(0, 4) == "comp") {
-    deleteFile(SPIFFS, ("/" + state->filename()).c_str());
-    renameFile(SPIFFS, "/temp.txt", ("/" + state->filename()).c_str());
+    SPIFFS.remove(("/" + state->filename()).c_str());
+    SPIFFS.rename("/temp.txt", ("/" + state->filename()).c_str());
     state->filename("");
   }
 
   if (command.substring(0, 4) == "file") {
     String message = command.substring(5);
-    appendFile(SPIFFS, "/temp.txt", message.c_str());
+    File file = SPIFFS.open("/temp.txt", FILE_APPEND);
+    file.print(message.c_str());
+    file.close();
+
   }
 
   if (command == "reload") {
@@ -84,55 +89,10 @@ void BcbAws::parseCommand(String command) {
   }
 }
 
-void BcbAws::appendFile(fs::FS &fs, const char * path, const char * message) {
-
-  File file = fs.open(path, FILE_APPEND);
-
-  if (!file) {
-    return;
-  }
-  file.print(message);
+void BcbAws::checkForIndex() {
+  if (SPIFFS.exists("/index.htm")) return; //
+  delay(50);
+  File file = SPIFFS.open("/index.htm", FILE_WRITE);
+  file.print(htmlCode);
   file.close();
-
-
-}
-
-void BcbAws::writeFile(fs::FS &fs, const char * path, const char * message) {
-
-  File file = fs.open(path, FILE_WRITE);
-
-  if (!file) {
-    return;
-  }
-  file.print(message);
-  file.close();
-
-
-}
-String BcbAws::readFile(fs::FS &fs, const char * path) {
-  Serial.printf("Reading file: %s\r\n", path);
-
-  File file = fs.open(path);
-  if (!file || file.isDirectory()) {
-    Serial.println("- failed to open file for reading");
-    return "";
-  }
-  String result;
-  Serial.println("- read from file:");
-  while (file.available()) {
-    result += String(char(file.read()));
-  }
-  file.close();
-  return result;
-}
-
-void BcbAws::renameFile(fs::FS &fs, const char * path1, const char * path2) {
-
-  fs.rename(path1, path2);
-}
-
-void BcbAws::deleteFile(fs::FS &fs, const char * path) {
-
-  fs.remove(path);
-
 }

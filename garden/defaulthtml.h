@@ -1,3 +1,4 @@
+#pragma once
 //default html page if not in SPIFFS
 
 // beginning of default web page

@@ -9385,3 +9385,23 @@ Content-Length: 204
 Content-Length: 295
 
 {"id":382,"result":{"contents":{"kind":"markdown","value":"### variable `daylightOffset_sec`  \n\n---\nType: `const int`  \nValue = `3600`  \n\n---\n```cpp\nconst int daylightOffset_sec = 3600\n```"},"range":{"start":{"line":18,"character":29},"end":{"line":18,"character":30}}},"jsonrpc":"2.0"}
+<<<
+Content-Length: 202
+
+{"jsonrpc":"2.0","id":383,"method":"textDocument/hover","params":{"textDocument":{"uri":"file:///home/brian/Arduino/projects/garden/esp32/garden/garden/garden.ino"},"position":{"line":5,"character":2}}}
+>>>
+Content-Length: 40
+
+{"id":383,"result":null,"jsonrpc":"2.0"}
+<<<
+Content-Length: 60
+
+{"jsonrpc":"2.0","id":384,"method":"shutdown","params":null}
+>>>
+Content-Length: 40
+
+{"id":384,"result":null,"jsonrpc":"2.0"}
+<<<
+Content-Length: 47
+
+{"jsonrpc":"2.0","method":"exit","params":null}
