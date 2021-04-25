@@ -21,7 +21,7 @@
 
 class State : public BcbAwsState , public BcbBmxState {
   public:
-
+// begin BcbBmxState functions
     // setter and getter for humidity
     float humidity();
     float humidity(float value);
@@ -38,15 +38,10 @@ class State : public BcbAwsState , public BcbBmxState {
     float temperature();
     float temperature(float value);
 
-
-    void dew ();
-
-
-    // is an OTA update in progress
-    bool setOta (bool value);
-    bool getOta ();
+// end BcbBmxState functions
 
 
+// begin BcbAwsState functions
     // setter and getter for the uploading filename
     String filename();
     String filename(String value);
@@ -63,6 +58,16 @@ class State : public BcbAwsState , public BcbBmxState {
 
     // return a stringifyed json representation of the state
     String getJSON();
+
+// end BcbAwsState functions
+
+// garden pump control functions
+        void dew ();
+
+
+    // is an OTA update in progress
+    bool setOta (bool value);
+    bool getOta ();
 
   private:
     // container for the state

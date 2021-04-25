@@ -74,7 +74,8 @@ void setup() {
   digitalWrite(2, LOW); // write the relay pin low before declaring it as an output
   pinMode(2, OUTPUT); // declare it an output
   state.relay(false); // and set the state to reflect the relay condition
-  bmx.bmxInit(& state);
+  bmx.bmxInit(& state); // initialize the bmx sensor
+  
   ArduinoOTA // OTA setup
   .onStart([]() {
     String type;
@@ -90,7 +91,7 @@ void setup() {
   });
   ArduinoOTA.begin();
 
-  xTaskCreatePinnedToCore(               //
+  xTaskCreatePinnedToCore(               // update the connected web clients every minute
     UpdateClients,                       // function name
     "updateClients",                     // name for humans
     2048,                                // This stack size can be checked & adjusted by reading the Stack Highwater
@@ -117,7 +118,7 @@ void UpdateClients(void *pvParameters) { // handle websocket  display
       if ( bmx.doSensorMeasurement())
         aws.notifyClients(); // send state to the client as a json string
     }
-    vTaskDelay(5000); // update clients every 15 minutes
+    vTaskDelay(60000); // update clients every minute
   }
 }
 
