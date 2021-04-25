@@ -6,10 +6,6 @@
 * Directory: https://github.com/bcburnett/garden/tree/master/garden
 * Questions: https://github.com/bcburnett/garden/discussions/1
 * 
-* The relay for the water solenoid is connected to pin 2 of the esp32 
-*   to give a visual indicator .
-*   
-* The capacitive moisture sensor analog output is connected to pin 32.
 * 
 * This application is in the Public Domain.
 * All information is provided in good faith, however I make no representation 
@@ -52,6 +48,7 @@ float State::temperature(){
   };;
 float State::temperature(float value){
   jsonMap["temperature"] = String(value,2);
+  dew();
   return jsonMap["temperature"].toFloat();
   };;
 
@@ -94,6 +91,11 @@ bool State::relay(bool value) {  // relay setter
   jsonMap["relay"] = value ? "true" : "false";
   return (jsonMap["relay"] == "true");
 };
+
+void State::dew(){
+  
+      jsonMap["dew"] = temperature() - ((100 - humidity()) / 5.);
+    }
 
 
 String State::getJSON() { //convert the state map to json

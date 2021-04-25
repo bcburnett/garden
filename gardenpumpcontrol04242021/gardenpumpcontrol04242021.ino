@@ -1,15 +1,10 @@
 /*
   Garden sensor sketch
-  File: garden.ino
+  File: gardenpumpcontrol04242021.ino
   Author: Brian C. Burnett
   GitHub repo: https://github.com/bcburnett/garden
   Directory: https://github.com/bcburnett/garden/tree/master/garden
   Questions: https://github.com/bcburnett/garden/discussions/1
-
-  The relay for the water solenoid is connected to pin 2 of the esp32
-    to give a visual indicator .
-
-  The capacitive moisture sensor analog output is connected to pin 32.
 
   This application is in the Public Domain.
   All information is provided in good faith, however I make no representation
@@ -42,7 +37,6 @@ bool wifiavail = false;
 
 // define functions
 void UpdateClients(void *pvParameters);
-void DoSensorMeasurement(void *pvParameters);
 void initWiFi();
 void initTime();
 void setup();
@@ -78,7 +72,7 @@ void setup() {
   initTime(); // connect to ntp servers and set rtc
   aws.BcbAwsInit(&state); // initialize the webserver and start listening for connections
   digitalWrite(2, LOW); // write the relay pin low before declaring it as an output
-  pinMode(2, OUTPUT); // declare it an output 
+  pinMode(2, OUTPUT); // declare it an output
   state.relay(false); // and set the state to reflect the relay condition
   bmx.bmxInit(& state);
   ArduinoOTA // OTA setup
@@ -96,7 +90,7 @@ void setup() {
   });
   ArduinoOTA.begin();
 
-  xTaskCreatePinnedToCore(               // 
+  xTaskCreatePinnedToCore(               //
     UpdateClients,                       // function name
     "updateClients",                     // name for humans
     2048,                                // This stack size can be checked & adjusted by reading the Stack Highwater
@@ -105,40 +99,23 @@ void setup() {
     NULL,                                // task handle
     ARDUINO_RUNNING_CORE);
 
-
-  xTaskCreatePinnedToCore(               // 
-    DoSensorMeasurement,                       // function name
-    "DoSensorMeasurement",                     // name for humans
-    2048,                                // This stack size can be checked & adjusted by reading the Stack Highwater
-    NULL,                                // task input parameter
-    2,                                   // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
-    NULL,                                // task handle
-    ARDUINO_RUNNING_CORE);
 }
 
 void loop() {
-  ArduinoOTA.handle(); // check if an update is available
-  if (WiFi.status() != WL_CONNECTED) // check if wifi is still connected, if not, reconnect
-    initWiFi();
+  if (!state.getOta()) {
+    ArduinoOTA.handle(); // check if an update is available
+    if (WiFi.status() != WL_CONNECTED) // check if wifi is still connected, if not, reconnect
+      initWiFi();
+  }
   vTaskDelay(60);
 }
 
-void UpdateClients(void *pvParameters) { // handle websocket and oled displays
+void UpdateClients(void *pvParameters) { // handle websocket  display
   (void)pvParameters;
   for (;;) {
     if (!state.getOta()) {
-      bmx.doSensorMeasurement();
-      aws.notifyClients(); // send state to the client as a json string
-    }
-    vTaskDelay(5000); // update clients every 15 minutes
-  }
-}
-
-void DoSensorMeasurement(void *pvParameters) { // measure weather parameters
-  (void)pvParameters;
-  for (;;) {
-    if (!state.getOta()) {
-      bmx.doSensorMeasurement();
+      if ( bmx.doSensorMeasurement())
+        aws.notifyClients(); // send state to the client as a json string
     }
     vTaskDelay(5000); // update clients every 15 minutes
   }

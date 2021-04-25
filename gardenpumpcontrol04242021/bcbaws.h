@@ -6,10 +6,6 @@
 * Directory: https://github.com/bcburnett/garden/tree/master/garden
 * Questions: https://github.com/bcburnett/garden/discussions/1
 * 
-* The relay for the water solenoid is connected to pin 2 of the esp32 
-*   to give a visual indicator .
-*   
-* The capacitive moisture sensor analog output is connected to pin 32.
 * 
 * This application is in the Public Domain.
 * All information is provided in good faith, however I make no representation 
@@ -23,12 +19,12 @@
 #include <SPIFFS.h>
 #include "State.h"
 #include "defaulthtml.h"
-
+#include "bcbawsstate.h"
 class BcbAws {
   public:
     BcbAws(); // blank constructor
     AsyncWebSocket ws = AsyncWebSocket("/ws"); // websocket server
-    void BcbAwsInit(State*istate); // class initialization with refrence to state
+    void BcbAwsInit(BcbAwsState * istate); // class initialization with refrence to state
     void notifyClients(); // notify clients with a json representation of state
 
   private:
@@ -36,5 +32,5 @@ class BcbAws {
     void handleWebSocketMessage(void *arg, uint8_t *data, size_t len); // invoked on websocket message received
     void parseCommand(String command); // parse received commands from websockets
     void checkForIndex(); // check if index.htm exists, if not, create it and populate with the contents of defaulthtml.h
-    State* state;
+    BcbAwsState* state;
 };

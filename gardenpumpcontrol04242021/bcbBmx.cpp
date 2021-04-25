@@ -1,8 +1,22 @@
+/*
+* Garden sensor sketch
+* File: bcbBmx.cpp
+* Author: Brian C. Burnett
+* GitHub repo: https://github.com/bcburnett/garden
+* Directory: https://github.com/bcburnett/garden/tree/master/garden
+* Questions: https://github.com/bcburnett/garden/discussions/1
+* 
+*    
+* This application is in the Public Domain.
+* All information is provided in good faith, however I make no representation 
+* or warranty of any kind, express or implied, regarding the accuracy, adequacy, 
+* validity, reliability, availability or completeness of this application.
+ */
 #include "bcbBmx.h"
 
 BcbBmx::BcbBmx(){};
 
-void BcbBmx::bmxInit(State * istate){
+void BcbBmx::bmxInit(BcbBmxState * istate){
   state = istate;
   Wire.begin();
 bmx280.begin();
@@ -26,7 +40,7 @@ bmx280.begin();
     bmx280.writeOversamplingHumidity(BMx280MI::OSRS_H_x16);
   };
 
-  void BcbBmx::doSensorMeasurement() {
+  bool BcbBmx::doSensorMeasurement() {
   //start a measurement
   bmx280.measure();
 
@@ -41,5 +55,5 @@ bmx280.begin();
 
   if (bmx280.isBME280())
     state->humidity(bmx280.getHumidity());
-
+return true;
 }
